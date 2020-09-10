@@ -1,0 +1,115 @@
+.el-submenu .el-menu-item {
+    font-size: 14px;
+    padding-left: 50px !important;
+
+    &.is-active {
+        background-color: $mainCcolor !important;
+    }
+}
+
+// 修改一级菜单样式
+li.el-submenu {
+    &.is-active.is-opened .el-submenu__title {
+        background-color: #283a4c !important;
+    }
+}
+
+
+/* 上传图片 */
+.upload-img-wrap {
+    display: flex;
+
+    .upload-img {
+        position: relative;
+        background-color: #fbfdff;
+        border: 1px dashed #c0ccda;
+        border-radius: 6px;
+        box-sizing: border-box;
+        width: 148px;
+        height: 148px;
+        cursor: pointer;
+        line-height: 146px;
+        vertical-align: top;
+        text-align: center;
+
+        &:before {
+            content: "+";
+            font-size: 50px;
+            font-weight: 300;
+            color: #ccc;
+        }
+
+        img {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .img-list {
+        flex: 1;
+        padding-left: 30px;
+
+        li {
+            float: left;
+            width: 60px;
+            height: 60px;
+            margin: 0 10px;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+// .close {
+//     .el-submenu {
+//         &.is-opened {
+//             > .el-submenu__title {
+//                 background-color: $mainCcolor !important;
+//             }
+//         }
+//     }
+// }
+// .el-menu--vertical {
+//     .el-menu { background-color: $mainCcolor !important; }
+//     .el-menu-item { line-height: 56px; }
+//     .el-menu-item:hover {
+//         background-color: $mainCcolor !important;
+//     }
+// }
+
+// /* table 样式*/
+// div.el-table {
+//     td, th { text-align: center; }
+//     th {
+//         font-weight: bold;
+//         color: #344a5f;
+//     }
+//     td { font-size: 14px; }
+// }
+/* dialog 样式 */
+// .el-dialog__body {
+//     padding: 30px 47px !important;
+// }
+// .el-dialog__footer {
+//     text-align: center !important;
+//     padding-bottom: 50px !important;
+//     .el-button {
+//         width: 150px;
+//         margin: 0 11px !important;
+//     }
+// }
+
+// div.el-form-item { margin-bottom: 22px; }
+
+// /* from 样式 */
+// .el-form {
+//     .el-form-item:last-child {
+//         margin-bottom: 0 !important;
+//     }
+// }
