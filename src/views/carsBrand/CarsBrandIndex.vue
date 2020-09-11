@@ -4,20 +4,11 @@
       <el-col :span="18">
         <el-form :inline="true" :model="form" class="demo-form-inline filter-form">
           <el-form-item label="车辆品牌：">
-            <el-cascader
-              v-model="form.area"
-              :options="options"
-              :props="{ expandTrigger: 'hover' }"
-              @change="handleChange"
-            ></el-cascader>
-          </el-form-item>
-
-          <el-form-item label="品牌型号：">
-            <el-input v-model="form.parking_name"></el-input>
+            <el-input v-model="form.brand" placeholder="请输入品牌"></el-input>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">搜索</el-button>
+            <el-button type="primary" @click="search">搜索</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -51,7 +42,7 @@
     </tableData>
 
     <!-- dialog弹窗 -->
-    <cars-brand-add :dialogVisible="dialogVisible" @close="close" :data="data_brand" />
+    <cars-brand-add :dialogVisible="dialogVisible" @close="close" :data="data_brand" @refresh="refresh"/>
     <!-- 父组件往子组件传数据是一个单向数据流 -->
   </div>
 </template>
@@ -98,39 +89,29 @@ export default {
       switch_disable: "",
       dialogVisible: false,
       form: {
-        parking_name: "",
-        area: "",
-        type: ""
+        brand:""
       },
-      options: [
-        {
-          value: 111,
-          label: "红旗"
-        },
-        {
-          value: 222,
-          label: "福特"
-        },
-        {
-          value: 333,
-          label: "五菱宏光"
-        }
-      ],
-      tableData: [
-        {
-          name: "南山停车场",
-          type: "室外",
-          area: "广东省 深圳市 南山区",
-          carsNumber: 20,
-          disabled: 0,
-          address: "45632212,54521"
-        }
-      ],
-      data_brand:{}
+
+      data_brand: {}
     };
   },
   methods: {
-    onSubmit() {},
+    // 刷新
+    refresh(){
+      this.$refs.table.requestData();
+    },
+    // 搜索
+    search(){
+      const requestData = {
+        pageSize: 10,
+        pageNumber: 1
+      };
+      if(this.form.brand){
+        requestData.brand = this.form.brand
+      }
+      // 调用子组件的方法
+       this.$refs.table.requestData(requestData);
+    },
     handleChange() {},
     add() {
       this.dialogVisible = true;
@@ -182,8 +163,8 @@ export default {
     },
     // 编辑
     edit(data) {
-      this.data_brand = JSON.parse(JSON.stringify(data))
-      this.dialogVisible = true
+      this.data_brand = JSON.parse(JSON.stringify(data));
+      this.dialogVisible = true;
     }
   }
 };

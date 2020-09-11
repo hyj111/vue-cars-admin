@@ -118,7 +118,7 @@ export default {
             prop: "address",
             type: "function",
             callback: (row, prop) => {
-              return parkingType(row[prop]);
+              return row[prop];
             }
           },
           { label: "可停放车辆", prop: "carsNumber" },
@@ -154,18 +154,18 @@ export default {
       parking_type: this.$store.state.config.parking_type,
 
       parking_data: {},
-      // switchj禁用
+      // switch禁用
       switch_disable: "",
       // 删除禁用
-      delate_disable:""
+      delate_disable: ""
     };
   },
   methods: {
     // search
     search() {
       const requestData = {
-        pageSize: this.pageSize,
-        pageNumber: this.pageNumber
+        pageSize: 10,
+        pageNumber: 1
       };
       // 过滤筛选
       const filterData = JSON.parse(JSON.stringify(this.form));
@@ -213,7 +213,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.delate_disable = id
+          this.delate_disable = id;
           ParkingDelate({ id: id }).then(res => {
             this.$message({
               type: "success",
@@ -221,10 +221,12 @@ export default {
             });
             // 调用子组件的方法
             this.$refs.table.requestData();
-             this.delate_disable = ""
+            this.delate_disable = "";
           });
         })
-        .catch(() => {this.delate_disable = ""});
+        .catch(() => {
+          this.delate_disable = "";
+        });
     },
     // 禁启用
     switchChange(data) {

@@ -133,8 +133,7 @@ export default {
       this.loadData();
     },
     requestData(params) {
-      //处理业务逻辑
-      console.log(params);
+      //处理业务逻辑;
       if (params) {
         this.table_config.data = params;
       }

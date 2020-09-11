@@ -1,14 +1,8 @@
 <template>
   <!-- dialog弹窗 -->
   <el-dialog title="新增车辆品牌" :visible.sync="isShow" @close="close" @opened="opened" append-to-body>
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="品牌中文" prop="nameCh">
-        <el-input v-model="form.nameCh"></el-input>
-      </el-form-item>
-      <el-form-item label="品牌英文" prop="nameEn">
-        <el-input v-model="form.nameEn"></el-input>
-      </el-form-item>
-      <el-form-item label="LOGO" prop="imgUrl">
+    <VueForm :formItem="form_item" :form_handler="form_handler" ref="vuForm" :formData="form">
+      <template v-slot:logo>
         <div class="upload-img-wrap">
           <div class="upload-img">
             <img :src="logo_current" v-show="logo_current" />
@@ -20,28 +14,17 @@
             </li>
           </ul>
         </div>
-      </el-form-item>
-
-      <el-form-item label="禁启用" prop="status">
-        <el-radio-group v-model="form.status">
-          <el-radio :label="item.value" v-for="item in status" :key="item.label">{{item.label}}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="描述" prop="content">
-        <el-input v-model="form.content"></el-input>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit">确 定</el-button>
-    </div>
+      </template>
+    </VueForm>
   </el-dialog>
 </template>
 
 <script>
+import VueForm from "components/public/form/form";
 import { BrandLogo, BrandAdd, BrandDetailed, BrandEdit } from "@/api/brand";
 export default {
   name: "CarsBrandAdd",
+  components: { VueForm },
   props: {
     dialogVisible: {
       type: Boolean,
@@ -49,11 +32,40 @@ export default {
     },
     data: {
       type: Object,
-      default: ()=>{}
+      default: () => {}
     }
   },
   data() {
     return {
+      // 表单配置
+      form_item: [
+        {
+          type: "input",
+          label: "品牌中文",
+          prop: "nameCh"
+        },
+        {
+          type: "input",
+          label: "品牌英文",
+          prop: "nameEn"
+        },
+        {
+          type: "slot",
+          label: "LOGO",
+          slotName: "logo"
+        },
+        {
+          type: "radio",
+          label: "禁启用",
+          prop: "status",
+          required: true,
+          options: this.$store.state.config.radio_disabled
+        }
+      ],
+      // 按钮配置
+      form_handler: [
+        { label: "确定", type: "danger", handler: () => this.submit() }
+      ],
       // 弹窗的关闭和显示
       isShow: this.dialogVisible,
       form: {
@@ -86,9 +98,9 @@ export default {
     },
     // 获取详情
     getDetailed() {
-     this.form = this.data
-     this.logo_current = this.data.imgUrl
-      this.form.imgUrl = this.logo_current
+      this.form = this.data;
+      this.logo_current = this.data.imgUrl;
+      this.form.imgUrl = this.logo_current;
     },
     // 获取Logo
     getBrandLogo() {
@@ -112,33 +124,35 @@ export default {
     },
     // 添加
     add() {
-      this.form.imgUrl = this.logo_current
+      this.form.imgUrl = this.logo_current;
       BrandAdd(this.form).then(res => {
         this.$message({
           message: res.data.message,
           type: "success"
         });
-        this.reset("form");
+        this.$emit("refresh")
+        this.reset();
+        this.close()
       });
     },
     // 修改
     edit() {
-      this.form.imgUrl = this.logo_current
-      const requestData = JSON.parse(JSON.stringify(this.form))
-  
+      this.form.imgUrl = this.logo_current;
+      const requestData = JSON.parse(JSON.stringify(this.form));
+
       BrandEdit(requestData).then(res => {
         this.$message({
           message: res.data.message,
           type: "success"
         });
-        this.reset("form");
+        this.$emit("refresh")
+        this.reset();
+        this.close()
       });
-    
     },
     // 表单重置
-    reset(formName) {
-      console.log("重置");
-      this.$refs[formName].resetFields();
+    reset() {    
+      this.$refs.vuForm.$refs.form.resetFields();
       this.logo_current = "";
     }
   }

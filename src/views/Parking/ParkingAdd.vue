@@ -1,55 +1,84 @@
 <template>
   <div class="parking-add">
-    <el-form ref="form" :rules="rules" :model="form" label-width="120px">
-      <el-form-item label="停车场名称" prop="parkingName">
-        <el-input v-model="form.parkingName"></el-input>
-      </el-form-item>
-      <!-- 区域级联选择器 -->
-      <el-form-item label="区域" prop="area">
+    <VueForm :formItem="form_item" :form_handler="form_handler" ref="vuForm" :formData=form>
+      <template v-slot:city>
         <CityArea @getcity="getcity" @callback="setMapCenter" :mapLocation="true" ref="cityArea"></CityArea>
-      </el-form-item>
-      <el-form-item label="详细地址" prop="address">
-        <el-input v-model="form.address"></el-input>
-      </el-form-item>
-      <el-form-item label="类型" prop="type">
-        <el-radio-group v-model="form.type">
-          <el-radio :label="item.value" v-for="item in type" :key="item.label">{{item.label}}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="可停放车辆" prop="carsNumber">
-        <el-input v-model.number="form.carsNumber"></el-input>
-      </el-form-item>
-
-      <el-form-item label="禁启用" prop="status">
-        <el-radio-group v-model="form.status">
-          <el-radio :label="item.value" v-for="item in status" :key="item.label">{{item.label}}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="位置">
+      </template>
+      <template v-slot:amap>
         <div class="addrss-map">
           <a-map @lnglat="lnglat" ref="amap" @mapLoad="mapLoad" :options="option_map" />
         </div>
-      </el-form-item>
-
-      <el-form-item label="经纬度" prop="lnglat">
-        <el-input v-model="form.lnglat"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="onSubmit('form')" :loading="btn_loading">确定</el-button>
-      </el-form-item>
-    </el-form>
+      </template>
+    </VueForm>
   </div>
 </template>
 
 <script>
 import AMap from "../amap/amap";
-import { ParkingAdd, ParkingDetailed,ParkingEdit } from "@/api/parking";
+import { ParkingAdd, ParkingDetailed, ParkingEdit } from "@/api/parking";
 import CityArea from "components/public/cityArea/CityArea";
+import VueForm from "components/public/form/form";
 export default {
   name: "ParkingAdd",
   data() {
+    let validateNumber = (rule, value, callback) => {
+            const regNumber = /^[0-9]*$/;
+            if(!value) {
+                callback(new Error('请输入可停放车辆'));
+            }else if(!regNumber.test(value)){
+                callback(new Error('请输入数字'));
+            }else{
+                callback();
+            }
+        }
     return {
+      // 表单配置
+      form_item: [
+        {
+          type: "input",
+          label: "停车场名称",
+          placeholder: "停车场名称",
+          prop: "parkingName",
+          required:true,
+          requiredMsg:"请输入停车场名称"
+          
+        },
+        { type: "slot", slotName: "city", label: "区域", prop: "area",requiredMsg:"请选择省市区"},
+        {
+          type: "input",
+          label: "详细地址",
+          placeholder: "请输入详细地址",
+          required:true,
+          prop: "address"
+        },
+        {
+          type: "radio",
+          label: "类型",
+          prop: "type",
+          required:true,
+          options: this.$store.state.config.parking_type
+        },
+        { type: "input", label: "可停放车辆", prop: "carsNumber",validator: [{ validator: validateNumber, trigger: 'change' }]},
+        {
+          type: "radio",
+          label: "禁启用",
+          prop: "status",
+          required:true,
+          options: this.$store.state.config.radio_disabled
+        },
+        { type: "slot", slotName: "amap", label: "位置" },
+          {
+          type: "input",
+          label: "经纬度",
+          prop: "lnglat",
+          disabled:true
+        },
+      ],
+      // 按钮配置
+      form_handler: [
+        {label:"确定",type:"danger",handler:()=>this.onSubmit()},
+        {label:"重置",type:""}
+      ],
       // id
       id: this.$route.query.id,
       // 地图配置
@@ -67,37 +96,21 @@ export default {
         status: "",
         lnglat: ""
       },
-      // 表单验证规则
-      rules: {
-        parkingName: [
-          { required: true, message: "请输入停车场名称", trigger: "blur" }
-        ],
-        area: [{ required: true, message: "请选择省市区", trigger: "blur" }],
-        lnglat: [
-          { required: true, message: "经纬度不能为空", trigger: "blur" }
-        ],
-        carsNumber: [
-          { required: true, message: "数量不能为空", trigger: "blur" },
-          { type: "number", message: "请输入数字" }
-        ],
-        address: [
-          { required: true, message: "详情地址不能为空", trigger: "change" }
-        ]
-      },
       btn_loading: false
     };
   },
   components: {
     AMap,
-    CityArea
+    CityArea,
+    VueForm
   },
 
   methods: {
     // 提交表单
-    onSubmit(formName) {
-      this.$refs[formName].validate(valid => {
+    onSubmit() {
+      this.$refs.vuForm.$refs.form.validate(valid => {
         if (valid) {
-          this.id?this.editParking():this.addParking();
+          this.id ? this.editParking() : this.addParking();
           this.message;
         } else {
           console.log("error submit!!");
@@ -116,7 +129,7 @@ export default {
             type: "success"
           });
           // 重置表单
-          this.reset("form");
+           this.reset();
         })
         .catch(err => {
           this.btn_loading = false;
@@ -124,8 +137,8 @@ export default {
     },
     // 修改停车场
     editParking() {
-      let requestData = JSON.parse(JSON.stringify(this.form))
-      requestData.id = this.id
+      let requestData = JSON.parse(JSON.stringify(this.form));
+      requestData.id = this.id;
       this.btn_loading = true;
       ParkingEdit(requestData)
         .then(res => {
@@ -135,8 +148,8 @@ export default {
             type: "success"
           });
           // 重置表单
-          this.reset("form");
-          this.$router.push('/ParkingIndex')
+          
+          this.$router.push("/ParkingIndex");
         })
         .catch(err => {
           this.btn_loading = false;
@@ -177,15 +190,17 @@ export default {
     },
     lnglat(value) {
       // 经纬度获取
+     
       this.form.lnglat = value.value;
+      console.log(this.form.lnglat);
     },
     setMapCenter(data) {
       // 中文地址的获取
       this.$refs.amap.setMapCenter(data);
     },
     // 表单重置
-    reset(formName) {
-      this.$refs[formName].resetFields();
+    reset() {
+       this.$refs.vuForm.$refs.form.resetFields();
       // 清除cityArea的值
       this.$refs.cityArea.clear();
       // 清除地图覆盖物

@@ -17,3 +17,19 @@ export function GetTableData(params={}){
        
     })
 }
+// 获取车辆品牌
+export function getCarsBrand(data){
+    return service.request({
+        method:"post",
+        url:"/common/getCarsBrand/",
+        data
+    })
+}
+// 获取停车场
+export function getParking(data){
+    return service.request({
+        method:"post",
+        url:"/common/getParking/",
+        data
+    })
+}

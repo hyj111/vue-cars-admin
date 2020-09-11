@@ -1,6 +1,6 @@
 <template>
   <div class="amap-wrap">
-    <el-amap vid="amapContainer" :zoom="zoom" :events="events" class="amap-demo"></el-amap>
+    <el-amap vid="amapContainer"  :events="events" class="amap-demo"></el-amap>
   </div>
 </template>
 
