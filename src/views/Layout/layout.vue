@@ -2,7 +2,7 @@
   <div id="layout-container">
     <layout-header />
     <layout-main />
-    <layout-nav />
+    <layout-nav class="nav"/>
   </div>
 </template>
 
@@ -26,4 +26,5 @@ export default {
 .layout-container {
   height: 100vh;
 }
+
 </style>

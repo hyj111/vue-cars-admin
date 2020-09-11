@@ -16,7 +16,8 @@
       ></el-input>
       <!-- select -->
       <el-select
-        v-else-if="item.type==='select'"
+        filterable
+        v-if="item.type==='select'"
         :placeholder="item.placeholder"
         v-model.trim="formData[item.prop]"
         :disabled="item.disabled"
@@ -29,15 +30,19 @@
         ></el-option>
       </el-select>
       <!-- 插槽 -->
-      <slot v-else-if="item.type==='slot'" :name="item.slotName"></slot>
+      <slot v-if="item.type==='slot'" :name="item.slotName"></slot>
       <!-- 单选框 -->
-      <el-radio-group v-else-if="item.type==='radio'" v-model="formData[item.prop]">
+      <el-radio-group v-if="item.type==='radio'" v-model="formData[item.prop]">
         <el-radio
           v-for="radio in item.options"
           :label="radio.value"
           :key="radio.label"
         >{{radio.label}}</el-radio>
       </el-radio-group>
+      <!-- 富文本编辑器 -->
+      <template v-if="item.type == 'wangeditor'">
+        <Wangeditor :content.sync="formData[item.prop]" :value="formData[item.prop]" ref="wangeditor" :isClear="wangeditorClear"></Wangeditor>
+      </template>
     </el-form-item>
     <!-- 按钮 -->
     <el-form-item>
@@ -52,14 +57,19 @@
 </template>
 
 <script>
+import Wangeditor from "../wangeditor/wangeditor";
 export default {
+  components: { Wangeditor },
   data() {
     return {
       form: {},
       type_msg: {
         input: "请输入",
-        radio: "请选择"
-      }
+        radio: "请选择",
+        select: "请选择"
+      },
+      // 清除富文本
+      wangeditorClear:false
     };
   },
   props: {
@@ -109,6 +119,14 @@ export default {
       } else {
         item.rules = requiredRules;
       }
+    },
+    // 重置表单
+    resetForm() {
+      this.$refs.form.resetFields();
+      // 清除富文本内容
+     if(this.$refs.wangeditor) {
+       this.wangeditorClear = !this.wangeditorClear
+     }
     }
   },
   watch: {

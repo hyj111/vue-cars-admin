@@ -1,141 +1,74 @@
 <template>
-  <div>
-    <VueForm :formItem="form_item" :form_handler="form_handler" ref="vuForm" :formData="form"></VueForm>
-
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="车辆品牌">
-        <el-cascader v-model="form.area" :options="options" :props="{ expandTrigger: 'hover' }"></el-cascader>
-      </el-form-item>
-
-      <el-form-item label="车辆型号">
-        <el-cascader v-model="form.area" :options="options" :props="{ expandTrigger: 'hover' }"></el-cascader>
-      </el-form-item>
-
-      <el-form-item label="停车场">
-        <el-cascader v-model="form.area" :options="options" :props="{ expandTrigger: 'hover' }"></el-cascader>
-      </el-form-item>
-
-      <el-form-item label="车牌号">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-
-      <el-form-item label="车架号">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-
-      <el-form-item label="发动机号">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-
-      <el-form-item label="年检">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="已检"></el-radio>
-          <el-radio label="未检"></el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="保养日期">
-        <el-row :gutter="30">
+  <div class="parking-add">
+    <VueForm :formItem="form_item" :form_handler="form_handler" ref="vuForm" :formData="form">
+      <!-- 保养日期 -->
+      <template v-slot:maintain>
+        <el-row>
           <el-col :span="6">
-            <el-input v-model="form.name"></el-input>
+            <el-date-picker
+              v-model="form.maintainDate"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"
+            ></el-date-picker>
           </el-col>
-          <el-col :span="16">下次保养日期：2020-11-11</el-col>
+          <el-col :span="6">下次保养日期：2020-11-11</el-col>
         </el-row>
-      </el-form-item>
-
-      <el-form-item label="档位">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="自动挡"></el-radio>
-          <el-radio label="手动档位"></el-radio>
+      </template>
+      <!-- 能源动力 -->
+      <template v-slot:energy>
+        <el-radio-group v-model="form.energyType" @change="changeEnergyType">
+          <el-radio
+            v-for="item in energyType"
+            :key="item.value"
+            :label="item.value"
+          >{{ item.label }}</el-radio>
         </el-radio-group>
-      </el-form-item>
 
-      <el-form-item label="能源类型">
-        <el-radio-group v-model="form.energy">
-          <el-radio :label="1">电</el-radio>
-          <el-radio :label="2">油</el-radio>
-          <el-radio :label="3">混合动力</el-radio>
-        </el-radio-group>
-        <div class="progress-bar-wrap" v-if="form.energy==1||form.energy==3">
+        <div class="progress-bar-wrap" v-if="form.energyType==1||form.energyType==3">
           <span class="label-text">电量</span>
-          <el-row :gutter="20">
-            <el-col :span="5">
-              <div class="progress-bar">
-                <span style="width:50%">
-                  <label>90%</label>
-                </span>
-              </div>
-            </el-col>
-            <el-col :span="2">
-              <el-input size="small" value="100"></el-input>
+          <el-row>
+            <el-col :span="10">
+              <el-slider v-model="form.electric" show-input></el-slider>
             </el-col>
           </el-row>
         </div>
-        <div class="progress-bar-wrap" v-if="form.energy==2||form.energy==3">
+        <div class="progress-bar-wrap" v-if="form.energyType==2||form.energyType==3">
           <span class="label-text">油量</span>
-          <el-row :gutter="20">
-            <el-col :span="5">
-              <div class="progress-bar">
-                <span style="width:50%">
-                  <label>90%</label>
-                </span>
-              </div>
-            </el-col>
-            <el-col :span="2">
-              <el-input size="small" value="100"></el-input>
+          <el-row>
+            <el-col :span="10">
+              <el-slider v-model="form.oil" show-input></el-slider>
             </el-col>
           </el-row>
         </div>
-      </el-form-item>
-
-      <el-form-item label="禁启用">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="禁用"></el-radio>
-          <el-radio label="启用"></el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="车辆属性">
+      </template>
+      <!-- 添加汽车属性 -->
+      <template v-slot:carsAttr>
+        <el-button type="primary" @click="addCarsAttr">添加汽车属性</el-button>
         <div class="cars-attr-list" v-for="(item, index) in cars_attr" :key="item.key">
           <el-row :gutter="10">
             <el-col :span="2">
-              <el-input value="100"></el-input>
+              <el-input v-model="item.attr_key"></el-input>
             </el-col>
             <el-col :span="3">
-              <el-input value="100"></el-input>
+              <el-input v-model="item.attr_value"></el-input>
             </el-col>
             <el-col :span="6">
-              <el-button type="primary" v-if="index == 0" @click="addCarsAttr">+</el-button>
-              <el-button v-else>-</el-button>
+              <el-button @click="delCarsAttr(index)">删除</el-button>
             </el-col>
           </el-row>
         </div>
-      </el-form-item>
-
-      <el-form-item label="座位">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="2人座"></el-radio>
-          <el-radio label="4人座"></el-radio>
-          <el-radio label="7人座"></el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="车辆描述">
-        <div ref="editorDom" style="text-align: left;"></div>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button>确定</el-button>
-      </el-form-item>
-    </el-form>
+      </template>
+    </VueForm>
   </div>
 </template>
 
 <script>
-import {getCarsBrand,getParking} from "@/api/common"
+import { getCarsBrand, getParking } from "@/api/common";
 import VueForm from "components/public/form/form";
 // 富文本编辑器
 import Editor from "wangeditor";
+import { CarsAdd,CarsEdit,CarsDetailed } from "@/api/cars";
 export default {
   name: "CarsAdd",
   components: { VueForm },
@@ -143,13 +76,8 @@ export default {
     return {
       // 富文本对象
       editor: null,
-
-      cars_attr: [
-        { key1: 111, value1: 222 },
-        { key2: 111, value2: 222 },
-        { key3: 111, value3: 222 },
-        { key4: 111, value4: 222 }
-      ],
+      // 车辆属性
+      cars_attr: [],
       // 表单配置
       form_item: [
         {
@@ -159,87 +87,92 @@ export default {
           prop: "carsBrandId",
           select_vlaue: "id", // 自有的私有属性
           select_label: "nameCh",
+          required: true,
           options: []
         },
-         { 
-          type: "select", 
-          label: "停车场", 
+        {
+          type: "select",
+          label: "停车场",
           placeholder: "请选择停车场",
-          select_vlaue: "id",   // 自有的私有属性
+          select_vlaue: "id", // 自有的私有属性
           select_label: "parkingName",
           prop: "parkingId",
+          required: true,
           options: []
         },
-        { 
-          type: "input", 
-          label: "车辆型号", 
+        {
+          type: "input",
+          label: "车辆型号",
           placeholder: "请输入车辆型号",
-          prop: "carsMode"
-        },
-        { 
-          type: "input", 
-          label: "车牌号", 
-          placeholder: "请输入车牌号",
+          required: true,
           prop: "carsNumber"
         },
-        { 
-          type: "input", 
-          label: "车架号", 
+        {
+          type: "input",
+          label: "车牌号",
+          placeholder: "请输入车牌号",
+          required: true,
+          prop: "carsMode"
+        },
+        {
+          type: "input",
+          label: "车架号",
           placeholder: "请输入车架号",
+          required: true,
           prop: "carsFrameNumber"
         },
-        { 
-          type: "input", 
-          label: "发动机号", 
+        {
+          type: "input",
+          label: "发动机号",
           placeholder: "请输入发动机号",
+          required: true,
           prop: "engineNumber"
         },
-        { 
-          type: "radio", 
-          label: "年检", 
+        {
+          type: "radio",
+          label: "年检",
           placeholder: "请选择年检",
           prop: "yearCheck",
+
           options: this.$store.state.config.year_check
         },
-        { 
-          type: "slot", 
-          slotName: "maintain", 
-          prop:"maintainDate", 
-          label: "保养日期"
+        {
+          type: "slot",
+          slotName: "maintain",
+          prop: "maintainDate",
+          label: "保养日期",
         },
-        { 
-          type: "radio", 
-          label: "档位", 
+        {
+          type: "radio",
+          label: "档位",
           placeholder: "请选择档位",
           prop: "gear",
           options: this.$store.state.config.gear
         },
-        { 
-          type: "slot", 
-          slotName: "energy", 
-          prop:"energyType", 
+        {
+          type: "slot",
+          slotName: "energy",
+          prop: "energyType",
           label: "能源类型"
         },
-        { 
-           type: "radio",
+        {
+          type: "radio",
           label: "禁启用",
           prop: "status",
-          required:true,
+          required: true,
           options: this.$store.state.config.radio_disabled
         },
-        { 
-          type: "slot", 
-          slotName: "carsAttr", 
-          prop:"carsAttr", 
+        {
+          type: "slot",
+          slotName: "carsAttr",
+          prop: "carsAttr",
           label: "车辆属性"
         },
-        { 
-          type: "Slot", 
-          slotName: "content", 
-          prop:"content", 
+        {
+          type: "wangeditor",
+          prop: "content",
           label: "车辆描述"
-        },
-      
+        }
       ],
       // 按钮配置
       form_handler: [
@@ -255,7 +188,7 @@ export default {
         engineNumber: "",
         yearCheck: true,
         gear: 1,
-        energyType: 2,
+        energyType: 1,
         electric: 100,
         oil: 100,
         carsAttr: "",
@@ -264,56 +197,148 @@ export default {
         status: true
       },
       // 车辆品牌列表
-      carsBrandList:[],
-      options: []
+      carsBrandList: [],
+      // 能源类型
+      energyType: this.$store.state.config.energyType,
+     
+      // id
+      id: this.$route.query.id,
     };
   },
-  beforeMount(){
-    this.GetCarsBrandList(),
-    this.GetParking()
+  beforeMount() {
+    this.GetCarsBrandList();
+    this.GetParking();
   },
   mounted() {
-    this.createEditor();
+    this.getDetail()
   },
   methods: {
+    // 添加车辆属性
     addCarsAttr() {
-      this.cars_attr.push({ key4: 111, value4: 222 });
+      this.cars_attr.push({ attr_key: "", attr_value: "" });
     },
-    onSubmit() {
-      console.log("submit!");
+    // 删除车辆属性
+    delCarsAttr(index) {
+      this.cars_attr.splice(index, 1);
     },
-    // 创建富文本对象
-    createEditor() {
-      this.editor = new Editor(this.$refs.editorDom);
-      this.editor.customConfig.onchange = html => {};
-      this.editor.create(); // 创建富文本实例
+    // 提交表单信息
+    onSubmit() {  
+      this.formatCarsAttr()
+      this.$refs.vuForm.$refs.form.validate(valid => {
+        if (valid) {
+          this.id ? this.editCars() : this.addCars();
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
+
     // 获取车辆品牌
-    GetCarsBrandList(){
-      getCarsBrand().then(res=>{
-        const data = res.data.data.data
-        if(data){
-          const carsBrand = this.form_item.filter(item => item.prop == "carsBrandId");
-         
-          if(carsBrand.length > 0) {
+    GetCarsBrandList() {
+      getCarsBrand().then(res => {
+        const data = res.data.data.data;
+        if (data) {
+          const carsBrand = this.form_item.filter(
+            item => item.prop == "carsBrandId"
+          );
+
+          if (carsBrand.length > 0) {
             carsBrand[0].options = data;
           }
-          
         }
-      })
+      });
     },
     // 获取停车场
-    GetParking(){
-       getParking().then(res=>{
-        const data = res.data.data.data
-       if(data) {
-          const parking = this.form_item.filter(item => item.prop == "parkingId");
-          if(parking.length > 0) {
+    GetParking() {
+      getParking().then(res => {
+        const data = res.data.data.data;
+        if (data) {
+          const parking = this.form_item.filter(
+            item => item.prop == "parkingId"
+          );
+          if (parking.length > 0) {
             parking[0].options = data;
           }
-          console.log(parking);
         }
-      })
+      });
+    },
+    //切换清零
+    changeEnergyType(value) {
+      (this.form.oil = 0), (this.form.electric = 0);
+    },
+    // 车辆属性格式化
+    formatCarsAttr() {
+      const data = this.cars_attr;
+      const carsAttr = {};
+      if (data && data.length != 0) {
+        data.forEach(item => {
+          if (item.attr_key) {
+            carsAttr[item.attr_key] = item.attr_value;
+          }
+        });
+        this.form.carsAttr = JSON.stringify(carsAttr);
+      }
+    },
+    // 新增车辆
+    addCars(){
+      CarsAdd(this.form)
+        .then(res => {
+          this.$message({
+            message: res.data.message,
+            type: "success"
+          });
+          
+          // 重置表单
+           this.reset();
+        })
+    },
+    // 车辆修改
+    editCars(){
+      let requestData = JSON.parse(JSON.stringify(this.form));
+      requestData.id = this.id;
+      this.btn_loading = true;
+      CarsEdit(requestData)
+        .then(res => {
+          this.btn_loading = false;
+          this.$message({
+            message: res.data.message,
+            type: "success"
+          });
+       
+        })
+    },
+    // 获取详情
+    getDetail() {
+      if (this.id) {
+        const id = { id: this.id };
+        CarsDetailed(id).then(res => {
+          const data = res.data.data;
+          // Object.keys()取出对象中的key，放在一个数组中
+          // 还原数据
+          
+          for (let key in data) {
+            if (Object.keys(this.form).includes(key)) {
+              this.form[key] = data[key];             
+            }
+          }
+          const carsAttr = JSON.parse(data.carsAttr);
+          const arr = []
+          for(let key in carsAttr){
+            const json = {}
+            json.attr_key = key;
+            json.attr_value = carsAttr[key]
+            arr.push(json)
+          }
+          this.cars_attr = arr
+          console.log(this.cars_attr);
+       
+        });
+      }
+    },
+     // 表单重置
+    reset() {
+       this.$refs.vuForm.resetForm();
     }
   }
 };

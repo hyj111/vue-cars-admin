@@ -8,6 +8,7 @@
           :prop="item.prop"
           :label="item.label"
           :key="item.prop"
+          :width="item.width"
           v-if="item.type==='function'"
         >
           <template slot-scope="scope">
@@ -19,10 +20,11 @@
           :prop="item.prop"
           :label="item.label"
           :key="item.prop"
+          :width="item.width"
           v-else-if="item.type==='slot'"
         >
           <template slot-scope="scope">
-            <slot :name="item.slotName" :data="scope.row"></slot>
+            <slot :name="item.slotName" :data="scope.row" ></slot>
           </template>
         </el-table-column>
         <!-- 图片 -->
@@ -34,7 +36,7 @@
           v-else-if="item.type==='image'"
         >
           <template slot-scope="scope">
-            <img :src="scope.row.imgUrl" :width="item.imgWidth || 50" />
+            <img :src="scope.row[item.prop]" :width="item.imgWidth || 50" />
           </template>
         </el-table-column>
         <!-- type不是function就为纯文本渲染 -->

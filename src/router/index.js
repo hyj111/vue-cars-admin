@@ -111,7 +111,7 @@ const routes = [
     },
     {
       path: "/carsAdd",
-      name: "CrarsAdd",
+      name: "CarsAdd",
       meta:{
         name:"新增车辆",       
       },
