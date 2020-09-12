@@ -1,5 +1,12 @@
 <template>
   <div>
+    <formSearch
+      v-if="table_config.search_form"
+      :formItem="table_config.form_item ||[]"
+      :formHandler="searchFormConfig.form_handler ||[]"
+      @callbackComponent="callbackComponent"
+      :config="searchFormConfig.config ||{}"
+    ></formSearch>
     <el-table :data="table_data" border style="width: 100%" v-loading="table_loading">
       <el-table-column type="selection" width="55" v-if="table_config.checkbox"></el-table-column>
       <template v-for="item in table_config.thead">
@@ -24,7 +31,7 @@
           v-else-if="item.type==='slot'"
         >
           <template slot-scope="scope">
-            <slot :name="item.slotName" :data="scope.row" ></slot>
+            <slot :name="item.slotName" :data="scope.row"></slot>
           </template>
         </el-table-column>
         <!-- 图片 -->
@@ -37,6 +44,30 @@
         >
           <template slot-scope="scope">
             <img :src="scope.row[item.prop]" :width="item.imgWidth || 50" />
+          </template>
+        </el-table-column>
+
+        <!-- 按钮 -->
+        <el-table-column
+          :prop="item.prop"
+          :label="item.label"
+          :key="item.prop"
+          :width="item.width"
+          v-else-if="item.type==='operation'"
+        >
+          <template slot-scope="scope">
+            <template v-if="item.default&&item.default.editButton">
+              <router-link :to="{name:item.default.editButtonLink,query:{id: scope.row.id }}">
+                <el-button type="danger" size="small" class="ma-r10">编辑</el-button>
+              </router-link>
+            </template>
+            <el-button
+              v-if="item.default&&item.default.deleteButton"
+              @click="delate(scope.row.id)"
+              size="small"
+            >删除</el-button>
+            <!-- 除了上面这两个的两个按钮，还想要别的用插槽的方式做 -->
+            <slot :name="item.slotName" :data="scope.row"></slot>
           </template>
         </el-table-column>
         <!-- type不是function就为纯文本渲染 -->
@@ -65,10 +96,14 @@
 </template>
 
 <script>
-import { GetTableData } from "@/api/common";
+// 组件
+import formSearch from "../formSearch/formSearch";
+import { GetTableData, Delete } from "@/api/common";
 import { ParkingList, ParkingDelate } from "@/api/parking";
+import { CarsStatus, CarsDelate } from "@/api/cars";
 export default {
   name: "tableData",
+  components: { formSearch },
   data() {
     return {
       // tableData
@@ -77,24 +112,48 @@ export default {
         thead: [],
         checkbox: true,
         url: "",
-        data: {}
+        data: {},
+        delete_url: "",
+        search_form: true
       },
       //页码
       total: 0,
       // 当前页码
       currentPage: 1,
       // 页面是否显示加载动画
-      table_loading: false
+      table_loading: false,
+      // 删除禁用
+      delate_disable: "",
+      form_data: {}
     };
   },
   props: {
     config: {
       type: Object,
-      default: () => {}
+      default: () => ({})
+    },
+    searchFormConfig: {
+      type: Object,
+      default: () => ({})
+    },
+    // 按钮
+    formHandler: {
+      type:Array,
+      default:()=>[]
     }
   },
 
   methods: {
+    callbackComponent(params) {
+      this[params.function](params.data);
+    },
+    search(data) {
+      const searchData = data;
+      searchData.pageNumber = 1;
+      searchData.pageSize = 10;
+      console.log(searchData);
+      this.requestData(searchData);
+    },
     // 配置
     initConfig() {
       for (let key in this.config) {
@@ -140,6 +199,33 @@ export default {
         this.table_config.data = params;
       }
       this.loadData();
+    },
+    // 删除
+    delate(id) {
+      this.$confirm("确定删除此信息, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let requestData = {
+            data: { id: id },
+            url: this.table_config.delete_url
+          };
+          this.delate_disable = id;
+          Delete(requestData).then(res => {
+            this.$message({
+              type: "success",
+              message: res.data.message
+            });
+            // 调用子组件的方法
+            this.requestData();
+            this.delate_disable = "";
+          });
+        })
+        .catch(() => {
+          this.delate_disable = "";
+        });
     }
   },
   watch: {
@@ -154,5 +240,8 @@ export default {
 </script>
 
 <style lang="scss" >
+.ma-r10 {
+  margin-right: 10px;
+}
 </style>
 

@@ -75,6 +75,7 @@ export default {
     },
     changeValue(value) {
       this.$emit("getcity", value.join());
+      this.$emit("update:cityAreaValue", value.join());
       // 获取中文地址
       if(this.mapLocation){
         this.address = this.$refs['cascaderAddr'].getCheckedNodes()[0].pathLabels

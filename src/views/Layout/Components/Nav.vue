@@ -2,11 +2,10 @@
   <div id="nav-wrap">
     <div class="logo"><img src="~@/assets/logo.png" alt=""></div>
     <el-menu
-      default-active="1-4-1"
       class="el-menu-vertical-demo"
       background-color="#32495f"
       text-color="#fff"
-      active-text-color="fff" 
+      active-text-color="#fff" 
       router
     >
       <template v-for="(item,index) in routers">
@@ -32,12 +31,13 @@
 export default {
   data() {
     return {
-      routers: null
+      routers: null,
+      // defalutActive:""
     };
   },
+ 
   mounted() {
     this.routers = this.$router.options.routes;
-
   },
 };
 </script>

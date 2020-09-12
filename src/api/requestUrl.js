@@ -1,6 +1,9 @@
 const requestUrl = {
     parkingList: "/parking/list/",
+    parkingDelete:"/parking/delete/",
     brandList: "/brand/list/",
-    carList:"/cars/list/"
+    brandDelete:"/brand/delete/",
+    carList:"/cars/list/",
+    carsDelete:"/cars/delete/"
 }
 export default requestUrl

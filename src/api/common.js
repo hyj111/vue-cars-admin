@@ -33,3 +33,13 @@ export function getParking(data){
         data
     })
 }
+// 删除列表
+export function Delete(params={}){ 
+
+    return service.request({
+        method:"post",
+        url:requestUrl[params.url],
+        data:params.data
+       
+    })
+}

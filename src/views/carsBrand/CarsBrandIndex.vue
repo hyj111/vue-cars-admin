@@ -1,26 +1,8 @@
 <template>
   <div class="home">
-    <el-row>
-      <el-col :span="18">
-        <el-form :inline="true" :model="form" class="demo-form-inline filter-form">
-          <el-form-item label="车辆品牌：">
-            <el-input v-model="form.brand" placeholder="请输入品牌"></el-input>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="search">搜索</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="6">
-        <div class="pull-right">
-          <el-button type="primary" @click="add">新增车辆品牌</el-button>
-        </div>
-      </el-col>
-    </el-row>
 
     <!-- 表格数据 -->
-    <tableData :config="table_config" ref="table">
+    <tableData :config="table_config" ref="table" :searchFormConfig="search_form_config">
       <template v-slot:status="slotData">
         <el-switch
           @change="switchChange(slotData.data)"
@@ -33,16 +15,16 @@
       <!-- 操作 -->
       <template v-slot:operation="slotData">
         <el-button type="danger" @click="edit(slotData.data)" size="small">编辑</el-button>
-        <el-button
-          @click="delate(slotData.data.id)"
-          size="small"
-          :loading="slotData.data.id===delate_disable"
-        >删除</el-button>
       </template>
     </tableData>
 
     <!-- dialog弹窗 -->
-    <cars-brand-add :dialogVisible="dialogVisible" @close="close" :data="data_brand" @refresh="refresh"/>
+    <cars-brand-add
+      :dialogVisible="dialogVisible"
+      @close="close"
+      :data="data_brand"
+      @refresh="refresh"
+    />
     <!-- 父组件往子组件传数据是一个单向数据流 -->
   </div>
 </template>
@@ -50,7 +32,7 @@
 <script>
 import tableData from "components/public/tableData/tableData";
 import CarsBrandAdd from "components/public/dialog/CarsBrandAdd";
-import { BrandDelate, BrandStatus } from "@/api/brand";
+import { BrandStatus } from "@/api/brand";
 export default {
   name: "CarsBrandIndex",
   components: {
@@ -78,18 +60,49 @@ export default {
             }
           },
           { label: "禁启用", prop: "status", type: "slot", slotName: "status" },
-          { label: "操作", type: "slot", slotName: "operation" }
+
+          {
+            label: "操作",
+            type: "operation",
+            default: {
+              deleteButton: true
+            },
+            slotName: "operation"
+          }
         ],
         url: "brandList",
+        delete_url: "brandDelete",
         data: { pageSize: 10, pageNumber: 1 }
       },
-      // 删除禁用
-      delate_disable: "",
+      // 搜索配置
+      search_form_config: {
+        form_item: [
+
+          {
+            label: "车辆品牌",
+            prop: "brand",
+            type: "input",
+            placeholder:"请输入车辆品牌"
+          },
+       
+        ],
+        form_handler: [
+          {
+            label: "新增车辆品牌",
+            prop: "add",
+            type: "success",
+            element: "button",
+            handler:()=>{this.dialogVisible = true}
+           
+          }
+        ],
+
+      },
       // switch禁用
       switch_disable: "",
       dialogVisible: false,
       form: {
-        brand:""
+        brand: ""
       },
 
       data_brand: {}
@@ -97,50 +110,11 @@ export default {
   },
   methods: {
     // 刷新
-    refresh(){
+    refresh() {
       this.$refs.table.requestData();
-    },
-    // 搜索
-    search(){
-      const requestData = {
-        pageSize: 10,
-        pageNumber: 1
-      };
-      if(this.form.brand){
-        requestData.brand = this.form.brand
-      }
-      // 调用子组件的方法
-       this.$refs.table.requestData(requestData);
-    },
-    handleChange() {},
-    add() {
-      this.dialogVisible = true;
     },
     close() {
       this.dialogVisible = false;
-    },
-    // 删除
-    delate(id) {
-      this.$confirm("确定删除此信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.delate_disable = id;
-          BrandDelate({ id: id }).then(res => {
-            this.$message({
-              type: "success",
-              message: res.data.message
-            });
-            // 调用子组件的方法
-            this.$refs.table.requestData();
-            this.delate_disable = "";
-          });
-        })
-        .catch(() => {
-          this.delate_disable = "";
-        });
     },
     // 禁启用
     switchChange(data) {

@@ -1,60 +1,6 @@
 <template>
   <div class="home">
-    <el-row>
-      <el-col :span="21">
-        <el-form :inline="true" :model="form" class="demo-form-inline filter-form">
-          <el-form-item label="区域">
-            <CityArea @getcity="getcity" ref="cityArea"></CityArea>
-          </el-form-item>
-
-          <el-form-item label="类型">
-            <el-select v-model="form.type" placeholder="停车场" class="width-100">
-              <el-option
-                v-for="item in parking_type"
-                :label="item.label"
-                :value="item.value"
-                :key="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="禁启用">
-            <el-select v-model="form.status" placeholder="请选择" class="width-100">
-              <el-option
-                v-for="item in parking_status"
-                :label="item.label"
-                :value="item.value"
-                :key="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="关键字">
-            <el-select placeholder="请选择" class="width-100" v-model="search_key">
-              <el-option label="停车场" value="parkingName"></el-option>
-              <el-option label="详细区域" value="address"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item>
-            <el-input placeholder="请输入关键字按Enter搜索" v-model="keyword"></el-input>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="search">搜索</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="3">
-        <div class="pull-right">
-          <router-link to="/parkingAdd">
-            <el-button type="primary">新增停车场</el-button>
-          </router-link>
-        </div>
-      </el-col>
-    </el-row>
-
-    <tableData :config="table_config" ref="table">
+    <tableData :config="table_config" :searchFormConfig="search_form_config" ref="table">
       <!-- 禁启用 -->
       <template v-slot:status="slotData">
         <el-switch
@@ -68,15 +14,6 @@
       <!-- 查看地图 -->
       <template v-slot:lnglat="slotData">
         <el-button type="success" size="mini" @click="showMap(slotData.data)">查看地图</el-button>
-      </template>
-      <!-- 操作 -->
-      <template v-slot:operation="slotData">
-        <el-button type="danger" @click="edit(slotData.data.id)" size="small">编辑</el-button>
-        <el-button
-          @click="delate(slotData.data.id)"
-          size="small"
-          :loading="slotData.data.id===delate_disable"
-        >删除</el-button>
       </template>
     </tableData>
 
@@ -129,10 +66,55 @@ export default {
             type: "slot",
             slotName: "lnglat"
           },
-          { label: "操作", type: "slot", slotName: "operation" }
+          {
+            label: "操作",
+            type: "operation",
+            default: {
+              deleteButton: true,
+              editButton: true,
+              editButtonLink: "ParkingAdd"
+            }
+          }
         ],
         url: "parkingList",
+        delete_url: "parkingDelete",
         data: { pageSize: 10, pageNumber: 1 }
+      },
+      // 搜索配置
+      search_form_config: {
+        form_item: [
+          {
+            label: "区域",
+            type: "city"
+          },
+          {
+            label: "类型",
+            prop: "parkingType",
+            type: "select",
+            width: "100px",
+            options: "parking_type"
+          },
+          {
+            label: "禁启用",
+            prop: "status",
+            type: "select",
+            width: "100px",
+            options: "radio_disabled"
+          },
+          { label: "关键字", type: "keyword" }
+        ],
+        form_handler: [
+          {
+            label: "新增停车场",
+            prop: "add",
+            type: "success",
+            element: "link",
+            router: "/ParkingAdd"
+          }
+        ],
+        config: {
+          resetButton: true
+        }
       },
       // 页面是否显示加载动画
       table_loading: false,
@@ -155,9 +137,7 @@ export default {
 
       parking_data: {},
       // switch禁用
-      switch_disable: "",
-      // 删除禁用
-      delate_disable: ""
+      switch_disable: ""
     };
   },
   methods: {
@@ -196,38 +176,7 @@ export default {
     close() {
       this.dialogVisible = false;
     },
-    // 编辑
-    edit(id) {
-      this.$router.push({
-        name: "ParkingAdd",
-        query: {
-          id
-        }
-      });
-    },
-    // 删除
-    delate(id) {
-      this.$confirm("确定删除此信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.delate_disable = id;
-          ParkingDelate({ id: id }).then(res => {
-            this.$message({
-              type: "success",
-              message: res.data.message
-            });
-            // 调用子组件的方法
-            this.$refs.table.requestData();
-            this.delate_disable = "";
-          });
-        })
-        .catch(() => {
-          this.delate_disable = "";
-        });
-    },
+
     // 禁启用
     switchChange(data) {
       const resquestData = {
