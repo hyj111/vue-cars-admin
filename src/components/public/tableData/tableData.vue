@@ -2,10 +2,11 @@
   <div>
     <formSearch
       v-if="table_config.search_form"
-      :formItem="table_config.form_item ||[]"
-      :formHandler="searchFormConfig.form_handler ||[]"
+      :formItem="table_config.form_item"
+      :formHandler="table_config.form_handler"
+      :formConfig="table_config.form_config"
       @callbackComponent="callbackComponent"
-      :config="searchFormConfig.config ||{}"
+      
     ></formSearch>
     <el-table :data="table_data" border style="width: 100%" v-loading="table_loading">
       <el-table-column type="selection" width="55" v-if="table_config.checkbox"></el-table-column>
@@ -114,7 +115,12 @@ export default {
         url: "",
         data: {},
         delete_url: "",
-        search_form: true
+        search_form: true,
+        form_item:[],
+        form_handler:[],
+        form_config:{
+          resetButton:false
+        }
       },
       //页码
       total: 0,
@@ -148,11 +154,12 @@ export default {
       this[params.function](params.data);
     },
     search(data) {
+      console.log(data);
       const searchData = data;
       searchData.pageNumber = 1;
       searchData.pageSize = 10;
-      console.log(searchData);
       this.requestData(searchData);
+      console.log(searchData);
     },
     // 配置
     initConfig() {
@@ -195,6 +202,7 @@ export default {
     },
     requestData(params) {
       //处理业务逻辑;
+        
       if (params) {
         this.table_config.data = params;
       }

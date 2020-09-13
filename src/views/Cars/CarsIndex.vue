@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <tableData :config="table_config" :searchFormConfig="search_form_config" ref="table">
+    <tableData :config="table_config" ref="table">
       <!-- 禁启用 -->
       <template v-slot:status="slotData">
         <el-switch
@@ -27,7 +27,7 @@ export default {
     return {
       // 表格配置
       table_config: {
-        search_form:true,
+        search_form: true,
         thead: [
           { label: "车牌号", prop: "carsMode" },
           { label: "车辆品牌", prop: "nameCh" },
@@ -77,11 +77,8 @@ export default {
         ],
         url: "carList",
         delete_url: "carsDelete",
-        data: { pageSize: 10, pageNumber: 1 }
-      },
-      // 搜索配置
-      search_form_config: {
-       
+        data: { pageSize: 10, pageNumber: 1 },
+        // 搜索配置
         form_item: [
           {
             label: "城市",
@@ -103,18 +100,20 @@ export default {
           },
           { label: "关键字", type: "keyword" }
         ],
-        form_handler:[{ label: "新增", prop:"add",type:"success",element:"link",router:"/carsAdd"}],
-        config: {
-          resetButton:true
+        form_handler: [
+          {
+            label: "新增",
+            prop: "add",
+            type: "success",
+            element: "link",
+            router: "/carsAdd"
+          }
+        ],
+        form_config: {
+          resetButton: true
         }
       },
 
-
-
-      // 禁启用
-      parking_status: this.$store.state.config.parking_status,
-      // 停车场类型
-      parking_type: this.$store.state.config.parking_type,
 
       parking_data: {},
       // switch禁用
@@ -122,7 +121,6 @@ export default {
     };
   },
   methods: {
-
     // 禁启用
     switchChange(data) {
       const resquestData = {

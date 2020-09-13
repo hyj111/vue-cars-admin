@@ -22,6 +22,7 @@ const state = {
       radio_disabled: [
         { label: "禁用", value: false },
         { label: "启用", value: true }
+      
     ],
     // 年检
     year_check: [

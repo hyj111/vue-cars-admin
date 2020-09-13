@@ -46,12 +46,12 @@
     <!-- 按钮 -->
     <el-form-item>
       <el-button type="danger" @click="search">搜索</el-button>
-      <el-button type="danger" @click="reset" v-if="config.resetButton">重置</el-button>
+      <el-button type="danger" @click="reset" v-if="formConfig.resetButton">重置</el-button>
       <template v-for="item in formHandler" >
         <router-link v-if="item.element==='link'" :to="item.router" class="margin-l-10">
           <el-button :type="item.type" :key="item.label">{{item.label}}</el-button>
         </router-link>
-        
+
         <el-button
           v-if="item.element=='button'"
           :type="item.type"
@@ -84,7 +84,7 @@ export default {
       type: Array,
       default: () => []
     },
-    config: {
+    formConfig: {
       type: Object,
       default: () => {}
     }

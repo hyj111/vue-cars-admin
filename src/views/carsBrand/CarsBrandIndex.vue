@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-
     <!-- 表格数据 -->
-    <tableData :config="table_config" ref="table" :searchFormConfig="search_form_config">
+    <tableData :config="table_config" ref="table">
       <template v-slot:status="slotData">
         <el-switch
           @change="switchChange(slotData.data)"
@@ -70,21 +69,14 @@ export default {
             slotName: "operation"
           }
         ],
-        url: "brandList",
-        delete_url: "brandDelete",
-        data: { pageSize: 10, pageNumber: 1 }
-      },
-      // 搜索配置
-      search_form_config: {
+        // 搜索配置
         form_item: [
-
           {
             label: "车辆品牌",
             prop: "brand",
             type: "input",
-            placeholder:"请输入车辆品牌"
-          },
-       
+            placeholder: "请输入车辆品牌"
+          }
         ],
         form_handler: [
           {
@@ -92,12 +84,16 @@ export default {
             prop: "add",
             type: "success",
             element: "button",
-            handler:()=>{this.dialogVisible = true}
-           
+            handler: () => {
+              this.dialogVisible = true;
+            }
           }
         ],
-
+        url: "brandList",
+        delete_url: "brandDelete",
+        data: { pageSize: 10, pageNumber: 1 }
       },
+
       // switch禁用
       switch_disable: "",
       dialogVisible: false,

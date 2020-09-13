@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <tableData :config="table_config" :searchFormConfig="search_form_config" ref="table">
+    <tableData :config="table_config" ref="table">
       <!-- 禁启用 -->
       <template v-slot:status="slotData">
         <el-switch
@@ -78,10 +78,7 @@ export default {
         ],
         url: "parkingList",
         delete_url: "parkingDelete",
-        data: { pageSize: 10, pageNumber: 1 }
-      },
-      // 搜索配置
-      search_form_config: {
+        data: { pageSize: 10, pageNumber: 1 },
         form_item: [
           {
             label: "区域",
@@ -89,7 +86,7 @@ export default {
           },
           {
             label: "类型",
-            prop: "parkingType",
+            prop: "type",
             type: "select",
             width: "100px",
             options: "parking_type"
@@ -112,10 +109,11 @@ export default {
             router: "/ParkingAdd"
           }
         ],
-        config: {
+        form_config: {
           resetButton: true
         }
       },
+
       // 页面是否显示加载动画
       table_loading: false,
       // 地图显示
@@ -141,26 +139,6 @@ export default {
     };
   },
   methods: {
-    // search
-    search() {
-      const requestData = {
-        pageSize: 10,
-        pageNumber: 1
-      };
-      // 过滤筛选
-      const filterData = JSON.parse(JSON.stringify(this.form));
-      for (let key in filterData) {
-        if (filterData[key]) {
-          requestData[key] = filterData[key];
-        }
-      }
-      //  关键字
-      if (this.keyword && this.search_key) {
-        requestData[this.search_key] = this.keyword;
-      }
-      // 调用子组件的方法
-      this.$refs.table.requestData(requestData);
-    },
 
     getcity(value) {
       // 地址的获取

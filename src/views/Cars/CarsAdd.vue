@@ -66,16 +66,13 @@
 <script>
 import { getCarsBrand, getParking } from "@/api/common";
 import VueForm from "components/public/form/form";
-// 富文本编辑器
-import Editor from "wangeditor";
 import { CarsAdd,CarsEdit,CarsDetailed } from "@/api/cars";
 export default {
   name: "CarsAdd",
   components: { VueForm },
   data() {
     return {
-      // 富文本对象
-      editor: null,
+
       // 车辆属性
       cars_attr: [],
       // 表单配置
@@ -127,6 +124,11 @@ export default {
           placeholder: "请输入发动机号",
           required: true,
           prop: "engineNumber"
+        },
+        {
+          type:"upload",
+          label:"缩略图",
+          prop:"imgUrl"
         },
         {
           type: "radio",
@@ -224,6 +226,7 @@ export default {
     // 提交表单信息
     onSubmit() {  
       this.formatCarsAttr()
+      
       this.$refs.vuForm.$refs.form.validate(valid => {
         if (valid) {
           this.id ? this.editCars() : this.addCars();

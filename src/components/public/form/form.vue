@@ -40,8 +40,11 @@
         >{{radio.label}}</el-radio>
       </el-radio-group>
       <!-- 富文本编辑器 -->
-      <template v-if="item.type == 'wangeditor'">
+      <template v-if="item.type == 'wangeditor'">       
         <Wangeditor :content.sync="formData[item.prop]" :value="formData[item.prop]" ref="wangeditor" :isClear="wangeditorClear"></Wangeditor>
+      </template>
+      <template v-if="item.type == 'upload'">
+      <Upload></Upload>
       </template>
     </el-form-item>
     <!-- 按钮 -->
@@ -55,11 +58,12 @@
     </el-form-item>
   </el-form>
 </template>
-
 <script>
 import Wangeditor from "../wangeditor/wangeditor";
+// upload
+import Upload from "../upload/upload"
 export default {
-  components: { Wangeditor },
+  components: { Wangeditor,Upload },
   data() {
     return {
       form: {},
