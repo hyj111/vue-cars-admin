@@ -2,7 +2,8 @@ import axios from 'axios'
 import { Message } from 'element-ui';
 import { getToken, getUsername } from "./app";
 //创建axios，赋值给service
-const BASEURL =  process.env.NODE_ENV === 'production' ? '' : '/devApi';
+const BASEURL =  process.env.NODE_ENV === 'production' ? '/devApi' : '/devApi';
+
 const service = axios.create({
     baseURL:BASEURL, //http://localhost:8080/api/ == http://www.web-jshtml.cn/productApi
     timeout: 5000,
