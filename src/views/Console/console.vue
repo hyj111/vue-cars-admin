@@ -1,6 +1,6 @@
 <template>
   <div>
-      控制台2525
+      <h2>开发中</h2>
   </div>
 </template>
 

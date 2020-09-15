@@ -5,7 +5,9 @@
       class="el-menu-vertical-demo"
       background-color="#32495f"
       text-color="#fff"
+      
       active-text-color="#fff" 
+      :default-active="this.$route.path"
       router
     >
       <template v-for="(item,index) in routers">
@@ -50,7 +52,7 @@ export default {
   left: 0;
   width: $navMenu;
   height: 100vh;
-  background-color: #32495f;
+  background-color: #263445;
   .el-menu-vertical-demo {
     width: 250px!important;
   }
@@ -58,7 +60,7 @@ export default {
 .logo {
   
   img {
-    width: 92px;
+    width: 240px;
     margin: 28px auto 25px;
   }
 }

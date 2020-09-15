@@ -177,7 +177,7 @@ export default {
           });
           this.$store.commit('setUsername',res.data.data.username)
           this.$store.commit('setToken',res.data.data.token)
-          this.$router.push('/console')
+          this.$router.push('/ParkingIndex')
         })
         .catch(err => {
           console.log(err);

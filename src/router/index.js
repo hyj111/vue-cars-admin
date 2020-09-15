@@ -22,33 +22,33 @@ const routes = [
     },
     component:Login,  
   },
-  {
-    path:"/layout",
-    name:"Layout",
-    redirect:"/console",
-    meta:{
-      name:"控制台",
-      icon:"el-icon-s-home"
-    },
-    component:Layout,
-    children:[
-      {
-        path: "/console",
-        name: "Console",
-        meta:{
-          name:"首页",         
-        },
-        component: ()=>import("../views/Console/console.vue")
-      }
-    ]
-  },
+  // {
+  //   path:"/layout",
+  //   name:"Layout",
+  //   redirect:"/console",
+  //   meta:{
+  //     name:"控制台",
+  //     icon:"iconfont icon-supplier-features"
+  //   },
+  //   component:Layout,
+  //   children:[
+  //     {
+  //       path: "/console",
+  //       name: "Console",
+  //       meta:{
+  //         name:"首页",         
+  //       },
+  //       component: ()=>import("../views/Console/console.vue")
+  //     }
+  //   ]
+  //  },
   //停车场
   {
     path:"/parking",
     name:"Parking", 
     meta:{
       name:"停车场",
-      icon:'el-icon-message'
+      icon:'iconfont icon-tingchechang1'
     },
     component:Layout,
     children:[
@@ -77,7 +77,7 @@ const routes = [
     name:"CarsBrand", 
     meta:{
       name:"车辆品牌",
-      icon:'el-icon-message'
+      icon:'iconfont icon-qiche1'
     },
     component:Layout,
     children:[
@@ -98,7 +98,7 @@ const routes = [
     name:"Cars", 
     meta:{
       name:"车辆管理",
-      icon:'el-icon-message'
+      icon:'iconfont icon-qiche1'
     },
     component:Layout,
     children:[

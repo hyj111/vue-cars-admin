@@ -47,7 +47,7 @@ export default {
 <style lang="scss" scoped>
 .login {
  height: 100vh;
-  background-color: #344a5f;
+  background-color: #263445;
   .menu-tab {
     // width: 330px;
     margin: auto;
