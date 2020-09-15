@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { getCarsBrand, getParking } from "@/api/common";
+import { getCarsBrand, getParking} from "@/api/common";
 import VueForm from "components/public/form/form";
 import { CarsAdd,CarsEdit,CarsDetailed } from "@/api/cars";
 export default {
@@ -72,7 +72,6 @@ export default {
   components: { VueForm },
   data() {
     return {
-
       // 车辆属性
       cars_attr: [],
       // 表单配置
@@ -117,6 +116,7 @@ export default {
           placeholder: "请输入车架号",
           required: true,
           prop: "carsFrameNumber"
+          
         },
         {
           type: "input",
@@ -128,7 +128,7 @@ export default {
         {
           type:"upload",
           label:"缩略图",
-          prop:"imgUrl"
+          prop:"carsImg"
         },
         {
           type: "radio",
@@ -196,7 +196,8 @@ export default {
         carsAttr: "",
         content: "",
         maintainDate: "",
-        status: true
+        status: true,
+        carsImg:""
       },
       // 车辆品牌列表
       carsBrandList: [],
@@ -205,11 +206,13 @@ export default {
      
       // id
       id: this.$route.query.id,
+     uploadData:{}
     };
   },
   beforeMount() {
     this.GetCarsBrandList();
     this.GetParking();
+    
   },
   mounted() {
     this.getDetail()
@@ -319,7 +322,7 @@ export default {
           const data = res.data.data;
           // Object.keys()取出对象中的key，放在一个数组中
           // 还原数据
-          
+          if(!data){return false}    
           for (let key in data) {
             if (Object.keys(this.form).includes(key)) {
               this.form[key] = data[key];             
@@ -334,7 +337,6 @@ export default {
             arr.push(json)
           }
           this.cars_attr = arr
-          console.log(this.cars_attr);
        
         });
       }
@@ -342,7 +344,8 @@ export default {
      // 表单重置
     reset() {
        this.$refs.vuForm.resetForm();
-    }
+    },
+ 
   }
 };
 </script>

@@ -98,7 +98,7 @@ export default {
             width: "100px",
             options: "radio_disabled"
           },
-          { label: "关键字", type: "keyword" }
+         { label: "关键字", type: "keyword",options:["parkingName","address"] }
         ],
         form_handler: [
           {

@@ -43,8 +43,9 @@
       <template v-if="item.type == 'wangeditor'">       
         <Wangeditor :content.sync="formData[item.prop]" :value="formData[item.prop]" ref="wangeditor" :isClear="wangeditorClear"></Wangeditor>
       </template>
+      <!-- 上传头像 -->
       <template v-if="item.type == 'upload'">
-      <Upload></Upload>
+      <Upload  :value.sync="formData[item.prop]" :imgUrl="formData[item.prop]"></Upload>
       </template>
     </el-form-item>
     <!-- 按钮 -->
@@ -94,6 +95,7 @@ export default {
     initFormData() {
       const formData = {};
       for (let item of this.formItem) {
+
         if (item.prop) {
           formData[item.prop] = item.value || null;
         }
@@ -107,6 +109,7 @@ export default {
         }
       }
       this.form = formData;
+     
     },
     rules(item) {
       const requiredRules = [

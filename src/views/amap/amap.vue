@@ -15,7 +15,7 @@ export default {
       // 经纬度
       lnglat: {},
       map: null,
-      zoom: 14,
+      zoom: 15,
       events: {}
     };
   },

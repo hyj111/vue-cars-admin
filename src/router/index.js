@@ -101,7 +101,16 @@ const routes = [
       icon:'el-icon-message'
     },
     component:Layout,
-    children:[{
+    children:[
+      {
+        path: "/carsAttr",
+        name: "CrarsAttr",
+        meta:{
+          name:"车辆属性",       
+        },
+        component:()=>import("../views/Cars/attrList.vue")
+      },
+      {
       path: "/carsIndex",
       name: "CrarsIndex",
       meta:{

@@ -6,8 +6,9 @@
       :formHandler="table_config.form_handler"
       :formConfig="table_config.form_config"
       @callbackComponent="callbackComponent"
-      
     ></formSearch>
+    <slot name="content"></slot>
+
     <el-table :data="table_data" border style="width: 100%" v-loading="table_loading">
       <el-table-column type="selection" width="55" v-if="table_config.checkbox"></el-table-column>
       <template v-for="item in table_config.thead">
@@ -100,8 +101,8 @@
 // 组件
 import formSearch from "../formSearch/formSearch";
 import { GetTableData, Delete } from "@/api/common";
-import { ParkingList, ParkingDelate } from "@/api/parking";
-import { CarsStatus, CarsDelate } from "@/api/cars";
+// import { ParkingList, ParkingDelate } from "@/api/parking";
+// import { CarsStatus, CarsDelate } from "@/api/cars";
 export default {
   name: "tableData",
   components: { formSearch },
@@ -110,16 +111,18 @@ export default {
       // tableData
       table_data: [],
       table_config: {
+        // 初始化是否请求接口
+        isRequest: true,
         thead: [],
         checkbox: true,
         url: "",
         data: {},
         delete_url: "",
         search_form: true,
-        form_item:[],
-        form_handler:[],
-        form_config:{
-          resetButton:false
+        form_item: [],
+        form_handler: [],
+        form_config: {
+          resetButton: false
         }
       },
       //页码
@@ -144,8 +147,8 @@ export default {
     },
     // 按钮
     formHandler: {
-      type:Array,
-      default:()=>[]
+      type: Array,
+      default: () => []
     }
   },
 
@@ -154,12 +157,10 @@ export default {
       this[params.function](params.data);
     },
     search(data) {
-      console.log(data);
       const searchData = data;
       searchData.pageNumber = 1;
       searchData.pageSize = 10;
       this.requestData(searchData);
-      console.log(searchData);
     },
     // 配置
     initConfig() {
@@ -169,7 +170,8 @@ export default {
         }
         // 配置完成后开始读取接口数据
       }
-      this.loadData();
+
+      this.table_config.isRequest && this.loadData();
     },
     loadData() {
       this.table_loading = true;
@@ -202,7 +204,7 @@ export default {
     },
     requestData(params) {
       //处理业务逻辑;
-        
+
       if (params) {
         this.table_config.data = params;
       }

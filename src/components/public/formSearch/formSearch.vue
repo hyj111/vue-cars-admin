@@ -37,7 +37,7 @@
       </div>
       <!-- keyword -->
       <div v-if="item.type=='keyword'">
-        <keyWord :options="['parkingName','address']" :value.sync="keyword" ref="keyword"></keyWord>
+        <keyWord :options="item.options" :value.sync="keyword" ref="keyword"></keyWord>
       </div>
 
       <!-- 插槽 -->
@@ -95,8 +95,14 @@ export default {
       const searchData = {};
       //   过滤空数据
       for (let key in this.form_data) {
+        
         if (this.form_data[key]) {
           searchData[key] = this.form_data[key];
+        }
+        // 出此下策，false传不进来
+        if(this.form_data[key]==undefined){
+           searchData[key] = false
+           console.log(searchData[key]);
         }
       }
       // 关键字
@@ -129,12 +135,13 @@ export default {
       }
     },
     // 字段初始化
-    initFormFelid(data) {
+    initFormFelid() {
       const felid = {};
       this.formItem.forEach(item => {
+       
         if (item.prop) {
           felid[item.prop] = "";
-        }
+        }       
       });
       this.form_data = felid;
     },

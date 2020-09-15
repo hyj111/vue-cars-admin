@@ -32,6 +32,7 @@ export default {
           { label: "车牌号", prop: "carsMode" },
           { label: "车辆品牌", prop: "nameCh" },
           { label: "车辆LOGO", prop: "imgUrl", type: "image", width: 100 },
+          { label: "车辆图片", prop: "carsImg", type: "image", width: 100 },
           {
             label: "年检",
             prop: "yearCheck",
@@ -96,9 +97,9 @@ export default {
             prop: "status",
             type: "select",
             width: "100px",
-            options: "radio_disabled"
+            options: "parking_status"
           },
-          { label: "关键字", type: "keyword" }
+          { label: "关键字", type: "keyword",options:["parkingName","address"] }
         ],
         form_handler: [
           {

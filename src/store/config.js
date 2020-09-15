@@ -11,7 +11,7 @@ const state = {
     // 停车场状态
     parking_status: [{
             label: "禁用",
-            value: 2
+            value: 0
         },
         {
             label: "启用",
@@ -20,8 +20,9 @@ const state = {
     ],
       // 禁用、启用
       radio_disabled: [
-        { label: "禁用", value: false },
-        { label: "启用", value: true }
+        { label: "启用", value: true },
+        { label: "禁用", value: false},
+        
       
     ],
     // 年检
@@ -45,6 +46,9 @@ const state = {
     keyword_options: [
         {label:"停车场名称",value:"parkingName"},
         {label:"详细区域",value:"address"},
+        {label:"字段",value:"key"},
+        {label:"文本",value:"value"},
+
     ]
 }
 export default {
