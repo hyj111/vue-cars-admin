@@ -5,7 +5,7 @@ import { getToken, getUsername } from "./app";
 const BASEURL =  process.env.NODE_ENV === 'production' ? '/devApi' : '/devApi';
 
 const service = axios.create({
-    baseURL:BASEURL, //http://localhost:8080/api/ == http://www.web-jshtml.cn/productApi
+    baseURL:'/devApi', //http://localhost:8080/api/ == http://www.web-jshtml.cn/productApi
     timeout: 5000,
 });
 
