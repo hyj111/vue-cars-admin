@@ -44,20 +44,7 @@
       </template>
       <!-- 添加汽车属性 -->
       <template v-slot:carsAttr>
-        <el-button type="primary" @click="addCarsAttr">添加汽车属性</el-button>
-        <div class="cars-attr-list" v-for="(item, index) in cars_attr" :key="item.key">
-          <el-row :gutter="10">
-            <el-col :span="2">
-              <el-input v-model="item.attr_key"></el-input>
-            </el-col>
-            <el-col :span="3">
-              <el-input v-model="item.attr_value"></el-input>
-            </el-col>
-            <el-col :span="6">
-              <el-button @click="delCarsAttr(index)">删除</el-button>
-            </el-col>
-          </el-row>
-        </div>
+        <carsAttr ref="carsAttr" :value.sync="form.carsAttr"></carsAttr>
       </template>
     </VueForm>
   </div>
@@ -66,10 +53,11 @@
 <script>
 import { getCarsBrand, getParking} from "@/api/common";
 import VueForm from "components/public/form/form";
+import carsAttr from "./component/carsAttr"
 import { CarsAdd,CarsEdit,CarsDetailed } from "@/api/cars";
 export default {
   name: "CarsAdd",
-  components: { VueForm },
+  components: { VueForm,carsAttr },
   data() {
     return {
       // 车辆属性
@@ -229,7 +217,6 @@ export default {
     // 提交表单信息
     onSubmit() {  
       this.formatCarsAttr()
-      
       this.$refs.vuForm.$refs.form.validate(valid => {
         if (valid) {
           this.id ? this.editCars() : this.addCars();
@@ -275,16 +262,7 @@ export default {
     },
     // 车辆属性格式化
     formatCarsAttr() {
-      const data = this.cars_attr;
-      const carsAttr = {};
-      if (data && data.length != 0) {
-        data.forEach(item => {
-          if (item.attr_key) {
-            carsAttr[item.attr_key] = item.attr_value;
-          }
-        });
-        this.form.carsAttr = JSON.stringify(carsAttr);
-      }
+      this.$refs.carsAttr.callbackValue()
     },
     // 新增车辆
     addCars(){

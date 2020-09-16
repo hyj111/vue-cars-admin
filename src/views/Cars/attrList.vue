@@ -21,7 +21,6 @@
 
 <script>
 import tableData from "components/public/tableData/tableData";
-import { CarsStatus } from "@/api/cars";
 import { GetCarsTypeBasis, GetCarsTypeList } from "@/api/carsAtts";
 import addCarsAttr from "components/public/dialog/addCarsAttr";
 export default {
@@ -97,7 +96,7 @@ export default {
       });
     },
 
-    // 自定义属性列表
+    // 点击后触发的事件
     getTypeList(data) {
       this.cars_list_type_id = data.id;
       //   存储当前数据
