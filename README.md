@@ -1,2 +1,20 @@
 # vue-cars-admin
-An online car rental background management system based on Vue
+基于Vue开发的一个在线租车后台管理系统
+
+# 技术栈
+
+vue2 + vuex + vue-router + webpack + ES6/7 + 高德地图Api + sass
+
+# 目标功能
+
+- 登录注册 -- 完成
+- 选择城市 -- 完成 
+- 新增停车场 -- 完成
+- 停车场列表展示 -- 完成
+- 新增汽车品牌 -- 完成
+- 汽车品牌展示 -- 完成
+- 新增汽车 -- 完成
+- 汽车列表展示 -- 完成
+- 汽车自定义属性 -- 完成
+- 汽车图片上传 -- 完成
+- 可行驶公里数计算 -- 完成
