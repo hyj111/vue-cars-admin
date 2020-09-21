@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "../views/Login/login.vue"
-import Layout from "../views/Layout/layout.vue"
+
 Vue.use(VueRouter);
+const Layout = ()=>import ("../views/Layout/layout.vue")
 
 const routes = [
   {
@@ -20,7 +20,7 @@ const routes = [
     meta:{
       name:"登录"
     },
-    component:Login,  
+    component:()=>import("../views/Login/login.vue"),  
   },
   // {
   //   path:"/layout",
