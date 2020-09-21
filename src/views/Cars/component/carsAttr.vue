@@ -1,8 +1,10 @@
 <template>
   <div>
     <carsBasisAttr @getAttrList="getAttrList"></carsBasisAttr>
+    {{countKm}}
     <el-row :gutter="15">
       <el-col :span="4" v-for="item in attr_data" :key="item.key">
+        <span>{{item.value}}</span>
         <el-input :placeholder="item.value" v-model="attr_item[attr_basis_data.key][item.key]"></el-input>
       </el-col>
     </el-row>
@@ -22,7 +24,41 @@ export default {
       attr_item: {}
     };
   },
+
   components: { carsBasisAttr },
+  computed: {
+    // 计算公里数
+    countKm(){   
+      if(this.attr_item.basics&&this.attr_item.carsBody){ 
+        // 剩余油量=当前油量百分比*邮箱容积  
+        console.log(this.attr_item.carsBody[`Tank volume`]);   
+         const surPlusOil = this.oil*this.attr_item.carsBody[`Tank volume`] / 100
+        //  公里数=剩余油量/实测消耗油量*100 单位是km
+         const Km = surPlusOil/ this.attr_item.basics.true_oli_consume * 100
+        // 返回值
+        this.$emit('update:countKm',Km.toFixed(2))
+      }   
+      
+    }
+  },
+  props:{
+    initValue: {
+      type:String,
+      default:""
+    },
+    oil:{
+      type:Number,
+      default:0
+    }
+  },
+  watch:{
+    initValue:{
+      handler(newValue){
+        newValue&&  (this.attr_item = JSON.parse(newValue))
+      },
+      immediate:true
+    }
+  },
   methods: {
     getAttrList(data) {
       this.attr_basis_data = data.attr_basis_data;

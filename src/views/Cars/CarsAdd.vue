@@ -44,20 +44,26 @@
       </template>
       <!-- 添加汽车属性 -->
       <template v-slot:carsAttr>
-        <carsAttr ref="carsAttr" :value.sync="form.carsAttr"></carsAttr>
+        <carsAttr
+          ref="carsAttr"
+          :value.sync="form.carsAttr"
+          :initValue="form.carsAttr"
+          :oil="form.oil"
+          :countKm.sync = form.countKm
+        ></carsAttr>
       </template>
     </VueForm>
   </div>
 </template>
 
 <script>
-import { getCarsBrand, getParking} from "@/api/common";
+import { getCarsBrand, getParking } from "@/api/common";
 import VueForm from "components/public/form/form";
-import carsAttr from "./component/carsAttr"
-import { CarsAdd,CarsEdit,CarsDetailed } from "@/api/cars";
+import carsAttr from "./component/carsAttr";
+import { CarsAdd, CarsEdit, CarsDetailed } from "@/api/cars";
 export default {
   name: "CarsAdd",
-  components: { VueForm,carsAttr },
+  components: { VueForm, carsAttr },
   data() {
     return {
       // 车辆属性
@@ -104,7 +110,6 @@ export default {
           placeholder: "请输入车架号",
           required: true,
           prop: "carsFrameNumber"
-          
         },
         {
           type: "input",
@@ -114,9 +119,9 @@ export default {
           prop: "engineNumber"
         },
         {
-          type:"upload",
-          label:"缩略图",
-          prop:"carsImg"
+          type: "upload",
+          label: "缩略图",
+          prop: "carsImg"
         },
         {
           type: "radio",
@@ -130,7 +135,7 @@ export default {
           type: "slot",
           slotName: "maintain",
           prop: "maintainDate",
-          label: "保养日期",
+          label: "保养日期"
         },
         {
           type: "radio",
@@ -146,11 +151,11 @@ export default {
           label: "能源类型"
         },
         {
-          type: "radio",
-          label: "禁启用",
-          prop: "status",
-          required: true,
-          options: this.$store.state.config.radio_disabled
+          type:"input",
+          label:"可行驶公里",
+          prop:"countKm",
+          company:true,
+          disabled:true
         },
         {
           type: "slot",
@@ -162,6 +167,13 @@ export default {
           type: "wangeditor",
           prop: "content",
           label: "车辆描述"
+        },
+        {
+          type: "radio",
+          label: "禁启用",
+          prop: "status",
+          required: true,
+          options: this.$store.state.config.radio_disabled
         }
       ],
       // 按钮配置
@@ -176,6 +188,7 @@ export default {
         carsNumber: "",
         carsFrameNumber: "",
         engineNumber: "",
+        countKm:"",
         yearCheck: true,
         gear: 1,
         energyType: 1,
@@ -185,25 +198,24 @@ export default {
         content: "",
         maintainDate: "",
         status: true,
-        carsImg:""
+        carsImg: ""
       },
       // 车辆品牌列表
       carsBrandList: [],
       // 能源类型
       energyType: this.$store.state.config.energyType,
-     
+
       // id
       id: this.$route.query.id,
-     uploadData:{}
+      uploadData: {}
     };
   },
   beforeMount() {
     this.GetCarsBrandList();
     this.GetParking();
-    
   },
   mounted() {
-    this.getDetail()
+    this.getDetail();
   },
   methods: {
     // 添加车辆属性
@@ -215,8 +227,8 @@ export default {
       this.cars_attr.splice(index, 1);
     },
     // 提交表单信息
-    onSubmit() {  
-      this.formatCarsAttr()
+    onSubmit() {
+      this.formatCarsAttr();
       this.$refs.vuForm.$refs.form.validate(valid => {
         if (valid) {
           this.id ? this.editCars() : this.addCars();
@@ -262,35 +274,32 @@ export default {
     },
     // 车辆属性格式化
     formatCarsAttr() {
-      this.$refs.carsAttr.callbackValue()
+      this.$refs.carsAttr.callbackValue();
     },
     // 新增车辆
-    addCars(){
-      CarsAdd(this.form)
-        .then(res => {
-          this.$message({
-            message: res.data.message,
-            type: "success"
-          });
-          
-          // 重置表单
-           this.reset();
-        })
+    addCars() {
+      CarsAdd(this.form).then(res => {
+        this.$message({
+          message: res.data.message,
+          type: "success"
+        });
+
+        // 重置表单
+        this.reset();
+      });
     },
     // 车辆修改
-    editCars(){
+    editCars() {
       let requestData = JSON.parse(JSON.stringify(this.form));
       requestData.id = this.id;
       this.btn_loading = true;
-      CarsEdit(requestData)
-        .then(res => {
-          this.btn_loading = false;
-          this.$message({
-            message: res.data.message,
-            type: "success"
-          });
-       
-        })
+      CarsEdit(requestData).then(res => {
+        this.btn_loading = false;
+        this.$message({
+          message: res.data.message,
+          type: "success"
+        });
+      });
     },
     // 获取详情
     getDetail() {
@@ -300,30 +309,21 @@ export default {
           const data = res.data.data;
           // Object.keys()取出对象中的key，放在一个数组中
           // 还原数据
-          if(!data){return false}    
+          if (!data) {
+            return false;
+          }
           for (let key in data) {
             if (Object.keys(this.form).includes(key)) {
-              this.form[key] = data[key];             
+              this.form[key] = data[key];
             }
           }
-          const carsAttr = JSON.parse(data.carsAttr);
-          const arr = []
-          for(let key in carsAttr){
-            const json = {}
-            json.attr_key = key;
-            json.attr_value = carsAttr[key]
-            arr.push(json)
-          }
-          this.cars_attr = arr
-       
         });
       }
     },
-     // 表单重置
+    // 表单重置
     reset() {
-       this.$refs.vuForm.resetForm();
-    },
- 
+      this.$refs.vuForm.resetForm();
+    }
   }
 };
 </script>

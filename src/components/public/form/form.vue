@@ -13,7 +13,9 @@
         :placeholder="item.placeholder"
         v-model.trim="formData[item.prop]"
         :disabled="item.disabled"
-      ></el-input>
+      >
+      <template slot="append" v-if="item.company">Km</template>
+      </el-input>
       <!-- select -->
       <el-select
         filterable
