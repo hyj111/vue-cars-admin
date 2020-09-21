@@ -225,7 +225,6 @@ export default {
 
       this.codeButtonStatus = true;
       this.codeButtonText = "发送中";
-      setTimeout(() => {
         GetSms(requestData)
           .then(res => {
             this.loginButton = false;
@@ -237,9 +236,10 @@ export default {
             this.countDown(60);
           })
           .catch(err => {
+          this.codeButtonStatus = false;
+          this.codeButtonText="再次获取";
             console.log(err);
           });
-      }, 1000);
     },
 
     // 倒计时方法
