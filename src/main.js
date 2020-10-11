@@ -13,8 +13,8 @@ import "./plugins/aMap"
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
-
-
+// 添加事件总线
+Vue.prototype.$bus = new Vue()
 
 new Vue({
   router,

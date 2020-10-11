@@ -60,13 +60,13 @@ export default {
           },
           { label: "禁启用", prop: "status", type: "slot", slotName: "status" },
 
-          {
+            {
             label: "操作",
             type: "operation",
-            default: {
-              deleteButton: true
-            },
-            slotName: "operation"
+            default: { deleteButton: true },
+            buttonGroup:[
+              {label:"编辑",type:"danger",event:"button",handler:(data) => this.edit(data)},
+            ]
           }
         ],
         // 搜索配置

@@ -13,8 +13,18 @@
         :placeholder="item.placeholder"
         v-model.trim="formData[item.prop]"
         :disabled="item.disabled"
-      >
+      >     
       <template slot="append" v-if="item.company">Km</template>
+      </el-input>
+         <!-- textarea -->
+      <el-input
+        type="textarea"
+        :rows="item.row"
+        v-if="item.type==='textarea'"
+        :placeholder="item.placeholder"
+        v-model.trim="formData[item.prop]"
+        :disabled="item.disabled"
+      >     
       </el-input>
       <!-- select -->
       <el-select
@@ -97,7 +107,6 @@ export default {
     initFormData() {
       const formData = {};
       for (let item of this.formItem) {
-
         if (item.prop) {
           formData[item.prop] = item.value || null;
         }
@@ -110,8 +119,7 @@ export default {
           item.rules = item.validator;
         }
       }
-      this.form = formData;
-     
+      this.form = formData;  
     },
     rules(item) {
       const requiredRules = [
@@ -131,7 +139,7 @@ export default {
     },
     // 重置表单
     resetForm() {
-      this.$refs.form.resetFields();
+      this.$refs['form'].resetFields();
       // 清除富文本内容
      if(this.$refs.wangeditor) {
        this.wangeditorClear = !this.wangeditorClear

@@ -66,14 +66,13 @@ export default {
           { label: "停车场", prop: "parkingName" },
           { label: "区域", prop: "address" },
 
-          {
+            {
             label: "操作",
             type: "operation",
-            default: {
-              deleteButton: true,
-              editButton: true,
-              editButtonLink: "CarsAdd"
-            }
+            default: { deleteButton: true},
+            buttonGroup:[
+              {label:"编辑",type:"danger",event:"link",name:"CarsAdd",key:"id"},
+            ]
           }
         ],
         url: "carList",

@@ -120,8 +120,8 @@ export default {
     };
     return {
       ruleForm: {
-        username: "",
-        password: "",
+        username: "1069234622@qq.com",
+        password: "a123456",
         code: ""
       },
       rules: {

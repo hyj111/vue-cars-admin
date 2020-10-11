@@ -66,14 +66,13 @@ export default {
             type: "slot",
             slotName: "lnglat"
           },
-          {
+            {
             label: "操作",
             type: "operation",
-            default: {
-              deleteButton: true,
-              editButton: true,
-              editButtonLink: "ParkingAdd"
-            }
+            default: { deleteButton: true, deleteKey: "carsLeaseTypeId" },
+            buttonGroup:[
+              {label:"编辑",type:"danger",event:"link",name:"ParkingAdd",key:"id"},
+            ]
           }
         ],
         url: "parkingList",

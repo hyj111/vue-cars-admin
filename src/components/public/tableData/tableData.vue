@@ -9,8 +9,17 @@
     ></formSearch>
     <slot name="content"></slot>
 
-    <el-table :data="table_data" border style="width: 100%" v-loading="table_loading">
-      <el-table-column type="selection" width="55" v-if="table_config.checkbox"></el-table-column>
+    <el-table
+      :data="table_data"
+      border
+      style="width: 100%"
+      v-loading="table_loading"
+    >
+      <el-table-column
+        type="selection"
+        width="55"
+        v-if="table_config.checkbox"
+      ></el-table-column>
       <template v-for="item in table_config.thead">
         <!-- 回调 -->
         <el-table-column
@@ -18,10 +27,12 @@
           :label="item.label"
           :key="item.prop"
           :width="item.width"
-          v-if="item.type==='function'"
+          v-if="item.type === 'function'"
         >
           <template slot-scope="scope">
-            <span v-html="item.callback&&item.callback(scope.row,item.prop)"></span>
+            <span
+              v-html="item.callback && item.callback(scope.row, item.prop)"
+            ></span>
           </template>
         </el-table-column>
         <!-- 插槽 -->
@@ -30,10 +41,27 @@
           :label="item.label"
           :key="item.prop"
           :width="item.width"
-          v-else-if="item.type==='slot'"
+          v-else-if="item.type === 'slot'"
         >
           <template slot-scope="scope">
             <slot :name="item.slotName" :data="scope.row"></slot>
+          </template>
+        </el-table-column>
+        <!-- switch -->
+        <el-table-column
+          :prop="item.prop"
+          :label="item.label"
+          :key="item.prop"
+          :width="item.width"
+          v-else-if="item.type === 'switch'"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              @change="item.handler && item.handler(scope.row)"
+              v-model="scope.row[item.prop]"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
           </template>
         </el-table-column>
         <!-- 图片 -->
@@ -42,7 +70,7 @@
           :label="item.label"
           :key="item.prop"
           :width="item.width"
-          v-else-if="item.type==='image'"
+          v-else-if="item.type === 'image'"
         >
           <template slot-scope="scope">
             <img :src="scope.row[item.prop]" :width="item.imgWidth || 50" />
@@ -55,25 +83,60 @@
           :label="item.label"
           :key="item.prop"
           :width="item.width"
-          v-else-if="item.type==='operation'"
+          v-else-if="item.type === 'operation'"
         >
           <template slot-scope="scope">
-            <template v-if="item.default&&item.default.editButton">
-              <router-link :to="{name:item.default.editButtonLink,query:{id: scope.row.id }}">
-                <el-button type="danger" size="small" class="ma-r10">编辑</el-button>
-              </router-link>
+            <!-- 编辑 -->
+            <!-- <router-link
+              :to="{
+                name: item.default.editButtonLink,
+                query: { id: scope.row[item.default.id || 'id'] }
+              }"
+            >
+              <el-button type="danger" size="small" class="ma-r10"
+                >编辑</el-button
+              >
+            </router-link> -->
+
+            <template v-if="item.buttonGroup && item.buttonGroup.length > 0">
+              <template v-for="button in item.buttonGroup">
+                <!-- 事件 -->
+                <el-button
+                  v-if="button.event === 'button'"
+                  :key="button.id"
+                  @click="button.handler && button.handler(scope.row)"
+                  size="small"
+                  :type="button.type">
+                  {{ button.label }}
+                </el-button>
+                <!-- 路由跳转 -->
+                <router-link
+                :key="button.id"
+                  v-if="button.event === 'link'"
+                  :to="{
+                    name: button.name,
+                    query: { [button.key]: scope.row[button.value || 'id'] }
+                  }">
+                  
+                  <el-button type="danger" size="small" class="ma-r10">{{button.label}}</el-button>
+                </router-link>
+              </template>
             </template>
-            <el-button
-              v-if="item.default&&item.default.deleteButton"
-              @click="delate(scope.row.id)"
-              size="small"
-            >删除</el-button>
-            <!-- 除了上面这两个的两个按钮，还想要别的用插槽的方式做 -->
+            <!-- 删除 -->
+            <el-button v-if="item.default && item.default.deleteButton" @click="delate(scope.row[item.default.deleteKey || 'id'])"size="small">
+              删除
+            </el-button>
+            <!-- 额外的按钮 -->
             <slot :name="item.slotName" :data="scope.row"></slot>
           </template>
         </el-table-column>
         <!-- type不是function就为纯文本渲染 -->
-        <el-table-column v-else :prop="item.prop" :label="item.label" :key="item.prop"></el-table-column>
+        <el-table-column
+          v-else
+          :prop="item.prop"
+          :label="item.label"
+          :key="item.prop"
+        ></el-table-column>
       </template>
     </el-table>
     <el-row class="padding-top-30">
@@ -135,6 +198,13 @@ export default {
       delate_disable: "",
       form_data: {}
     };
+  },
+  mounted() {
+    // 刷新页面
+    this.$bus.$on("dataRefresh", () => {
+      // A发送来的消息
+      this.requestData();
+    });
   },
   props: {
     config: {
@@ -202,9 +272,9 @@ export default {
       this.table_config.data.pageNumber = val;
       this.loadData();
     },
+
     requestData(params) {
       //处理业务逻辑;
-
       if (params) {
         this.table_config.data = params;
       }

@@ -88,7 +88,10 @@ export default {
   },
   methods: {
     // 反向修改父组件的数据
-    close() {
+    close() {   
+      this.reset()
+      delete this.form.id;
+      this.isShow = false
       this.$emit("close");
     },
     // 打开弹窗时请求标志数据

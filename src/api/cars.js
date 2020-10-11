@@ -3,7 +3,7 @@ import service from "@/utils/request"
 export function CarsAdd(data){
     return service.request({
         method: "post",
-        url: "/cars/add/",
+        url: "/cars/carsInfoAdd/",
         data
     })
 }
@@ -11,7 +11,7 @@ export function CarsAdd(data){
 export function CarsEdit(data){
     return service.request({
         method: "post",
-        url: "/cars/edit/",
+        url: "/cars/carsInfoEdit/",
         data
     })
 }
@@ -36,7 +36,7 @@ export function CarsDelate(data={}){
 export function CarsDetailed(data={}){
     return service.request({
         method: "post",
-        url: "/cars/detailed/",
+        url: "/cars/carsDetailed/",
         data
     })
 }
